@@ -6,6 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Heart, Search, Filter, MapPin, Globe, Phone, Users, Handshake, TreePine, Baby } from "lucide-react"
+import Image from "next/image"
+import logo from "../public/logo.png"
+import logobranca from "../public/logo-branca.png"
 
 // Mock data for ONGs
 const mockOngs = [
@@ -113,23 +116,17 @@ export default function HomePage() {
       ></div>
 
       {/* Header */}
-      <header className="border-b border-gray-100 bg-white/95 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
+      <header className="border-b border-gray-100 bg-white/95 backdrop-blur-sm sticky 
+      top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <Heart className="h-10 w-10" style={{ color: "var(--doafacil-primary-orange)" }} />
-                <div
-                  className="absolute -top-1 -right-1 w-4 h-4 rounded-full"
-                  style={{ backgroundColor: "var(--doafacil-secondary-green)" }}
-                ></div>
+                <Image src={logo} alt="Logo DoaFácil"  className="h-31 w-31 object-contain" />
               </div>
-              <h1 className="text-3xl font-bold text-gray-900">DoaFácil</h1>
+             
             </div>
             <nav className="hidden md:flex items-center gap-8">
-              <a href="#" className="text-gray-700 hover:text-gray-900 transition-colors font-medium">
-                Início
-              </a>
               <a href="#" className="text-gray-700 hover:text-gray-900 transition-colors font-medium">
                 ONGs
               </a>
@@ -139,14 +136,6 @@ export default function HomePage() {
               <a href="#" className="text-gray-700 hover:text-gray-900 transition-colors font-medium">
                 Sobre
               </a>
-              <Button
-                variant="outline"
-                asChild
-                className="border-2 font-semibold bg-transparent"
-                style={{ borderColor: "var(--doafacil-primary-orange)", color: "var(--doafacil-primary-orange)" }}
-              >
-                <a href="/admin">Admin</a>
-              </Button>
             </nav>
           </div>
         </div>
@@ -461,9 +450,8 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div>
-              <div className="flex items-center gap-3 mb-6">
-                <Heart className="h-8 w-8" style={{ color: "var(--doafacil-primary-orange)" }} />
-                <h3 className="text-2xl font-bold">DoaFácil</h3>
+              <div className="flex items-center gap-3">
+                <Image src={logobranca} alt="Logo DoaFácil"  className="h-42 w-42 object-contain" />
               </div>
               <p className="text-gray-300 leading-relaxed">
                 Conectando pessoas generosas com instituições que fazem a diferença. Juntos, podemos transformar vidas
@@ -471,7 +459,7 @@ export default function HomePage() {
               </p>
             </div>
             <div>
-              <h4 className="font-bold text-lg mb-6">Links Úteis</h4>
+              <h4 className="font-bold text-lg mb-6 mt-8">Links Úteis</h4>
               <ul className="space-y-3">
                 <li>
                   <a href="#" className="text-gray-300 hover:text-white transition-colors">
@@ -484,23 +472,18 @@ export default function HomePage() {
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                    Sobre Nós
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-300 hover:text-white transition-colors">
+                  <a href="#" className="text-gray-300 hover:text-white transition-colors ">
                     Contato
                   </a>
                 </li>
               </ul>
             </div>
             <div>
-              <h4 className="font-bold text-lg mb-6">Contato</h4>
+              <h4 className="font-bold text-lg mb-6  mt-8">Contato</h4>
               <div className="text-gray-300 space-y-3">
                 <p>contato@doafacil.org.br</p>
                 <p>(11) 9999-8888</p>
-                <p>São Paulo, SP</p>
+                <p>Fortaleza, CE</p>
               </div>
             </div>
           </div>

@@ -7,10 +7,9 @@ import { Suspense } from "react"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "DoaFácil - Conectando Doadores e ONGs",
+  title: "DoaFácil - Conectando Doadores a Instituições",
   description:
-    "Plataforma que conecta pessoas que querem fazer doações com ONGs e instituições que aceitam essas doações.",
-  generator: "v0.app",
+    "Plataforma que conecta pessoas que querem fazer doações com ONGs e instituições que aceitam essas doações."
 }
 
 export default function RootLayout({
@@ -19,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="pt-br">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
         <Suspense fallback={null}>{children}</Suspense>
         <Analytics />

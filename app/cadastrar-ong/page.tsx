@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Heart, ArrowLeft, CheckCircle, Building, Mail, Phone } from "lucide-react"
 import Link from "next/link"
 
@@ -148,86 +147,76 @@ export default function CadastrarOngPage() {
     setIsSubmitted(true)
   }
 
-  if (isSubmitted) {
-    return (
-      <div className="min-h-screen bg-white">
-        {/* Header */}
-        <header className="border-b border-gray-200 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
-              <Link href="/" className="flex items-center gap-2">
-                <Heart className="h-8 w-8" style={{ color: "var(--doafacil-orange)" }} />
-                <h1 className="text-2xl font-bold text-gray-900">DoaFácil</h1>
-              </Link>
-            </div>
+if (isSubmitted) {
+  return (
+    <div className="min-h-screen bg-white flex flex-col">
+      {/* Header */}
+      <header className="border-b border-gray-200 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <Link href="/" className="flex items-center gap-2">
+              <Heart className="h-8 w-8" style={{ color: "var(--doafacil-orange)" }} />
+              <h1 className="text-2xl font-bold text-gray-900">DoaFácil</h1>
+            </Link>
           </div>
-        </header>
+        </div>
+      </header>
 
-        {/* Success Message */}
-        <div className="py-16 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl mx-auto text-center">
-            <div className="mb-8">
-              <CheckCircle className="h-24 w-24 mx-auto mb-6" style={{ color: "var(--doafacil-green)" }} />
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Cadastro Enviado com Sucesso!</h2>
-              <p className="text-lg text-gray-600 mb-6 text-pretty">
-                Obrigado por se cadastrar na DoaFácil! Sua instituição foi registrada e está aguardando aprovação.
-              </p>
-            </div>
+      {/* Success Message centralizado */}
+      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <div className="max-w-2xl w-full mx-auto text-center">
+          <div className="mb-8">
+            <CheckCircle className="h-24 w-24 mx-auto mb-6" style={{ color: "var(--doafacil-secondary-green)" }} />
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Cadastro Enviado com Sucesso!</h2>
+            <p className="text-lg text-gray-600 mb-6 text-pretty">
+              Obrigado por se cadastrar na DoaFácil! Sua instituição foi registrada e em breve entraremos em contato.
+            </p>
+          </div>
 
-            <Alert className="mb-8 text-left" style={{ borderColor: "var(--doafacil-light-blue)" }}>
-              <AlertDescription className="text-sm leading-relaxed">
-                <strong>Próximos passos:</strong>
-                <br />• Nossa equipe irá analisar as informações fornecidas
-                <br />• Você receberá um email de confirmação em até 48 horas
-                <br />• Após a aprovação, sua instituição aparecerá na listagem do site
-                <br />• Em caso de dúvidas, entre em contato conosco
-              </AlertDescription>
-            </Alert>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/">
-                <Button
-                  size="lg"
-                  className="text-white font-semibold px-8"
-                  style={{ backgroundColor: "var(--doafacil-green)" }}
-                >
-                  Voltar ao Início
-                </Button>
-              </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/">
               <Button
-                variant="outline"
                 size="lg"
-                className="border-2 font-semibold px-8 bg-transparent"
-                style={{ borderColor: "var(--doafacil-orange)", color: "var(--doafacil-orange)" }}
-                onClick={() => {
-                  setIsSubmitted(false)
-                  setFormData({
-                    name: "",
-                    description: "",
-                    address: "",
-                    city: "",
-                    state: "",
-                    phone: "",
-                    email: "",
-                    website: "",
-                    responsibleName: "",
-                    responsibleCpf: "",
-                    cnpj: "",
-                    categories: [],
-                    acceptedDonations: [],
-                    operatingHours: "",
-                    additionalInfo: "",
-                  })
-                }}
+                className="text-white font-semibold px-8"
+                style={{ backgroundColor: "var(--doafacil-secondary-green)", cursor: "pointer" }}
               >
-                Cadastrar Outra Instituição
+                Voltar ao Início
               </Button>
-            </div>
+            </Link>
+            <Button
+              variant="outline"
+              size="lg"
+              className="border-2 font-semibold px-8 bg-transparent"
+              style={{ borderColor: "var(--doafacil-orange)", color: "var(--doafacil-orange)", cursor: "pointer" }}
+              onClick={() => {
+                setIsSubmitted(false)
+                setFormData({
+                  name: "",
+                  description: "",
+                  address: "",
+                  city: "",
+                  state: "",
+                  phone: "",
+                  email: "",
+                  website: "",
+                  responsibleName: "",
+                  responsibleCpf: "",
+                  cnpj: "",
+                  categories: [],
+                  acceptedDonations: [],
+                  operatingHours: "",
+                  additionalInfo: "",
+                })
+              }}
+            >
+              Cadastrar Outra Instituição
+            </Button>
           </div>
         </div>
       </div>
-    )
-  }
+    </div>
+  )
+}
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -251,7 +240,7 @@ export default function CadastrarOngPage() {
       <div className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Cadastrar Instituição</h2>
+            <h2 className="text-3xl font-bold mb-4" style={{ color: "var(--doafacil-primary-orange)" }}>Cadastrar Instituição</h2>
             <p className="text-lg text-gray-600 text-pretty">
               Preencha as informações abaixo para cadastrar sua ONG ou instituição na plataforma DoaFácil.
             </p>
@@ -495,7 +484,7 @@ export default function CadastrarOngPage() {
                 <div className="border-t pt-6">
                   <div className="flex flex-col sm:flex-row gap-4 justify-end">
                     <Link href="/">
-                      <Button variant="outline" type="button" className="w-full sm:w-auto bg-transparent">
+                      <Button variant="outline" type="button" className="w-full sm:w-auto bg-transparent" style={{ cursor: "pointer" }}>
                         Cancelar
                       </Button>
                     </Link>
@@ -503,7 +492,7 @@ export default function CadastrarOngPage() {
                       type="submit"
                       disabled={isSubmitting}
                       className="w-full sm:w-auto text-white font-semibold px-8"
-                      style={{ backgroundColor: "var(--doafacil-green)" }}
+                      style={{ backgroundColor: "var(--doafacil-primary-orange)", cursor: "pointer"}}
                     >
                       {isSubmitting ? "Enviando..." : "Cadastrar Instituição"}
                     </Button>
