@@ -196,7 +196,7 @@ export default function HomePage() {
               <div className="relative z-10">
                 <div className="w-80 h-80 mx-auto rounded-full overflow-hidden shadow-2xl border-8 border-white">
                   <img
-                    src="/happy-children-playing-and-smiling-in-a-colorful-e.png"
+                    src="/box.png"
                     alt="Crianças felizes brincando"
                     className="w-full h-full object-cover"
                   />
@@ -289,7 +289,7 @@ export default function HomePage() {
       </section>
 
       {/* Search and Filters */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-white relative">
+      <section id="instituicoes" className="py-12 px-4 sm:px-6 lg:px-8 bg-white relative">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-10">
             <h3 className="text-3xl font-bold text-gray-900 mb-4">Encontre Instituições</h3>
