@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Heart, Search, Filter, MapPin, Globe, Phone, Users, Handshake, TreePine, Baby } from "lucide-react"
+import { Search, Filter, MapPin, Globe, Phone, Users, Handshake, TreePine, Baby } from "lucide-react"
 import Image from "next/image"
 import logo from "../public/logo.png"
 import logobranca from "../public/logo-branca.png"
@@ -42,19 +42,9 @@ const mockOngs = [
     phone: "(31) 5555-1234",
     acceptedDonations: ["Ração", "Medicamentos Veterinários", "Cobertores"],
   },
-  {
-    id: 4,
-    name: "Verde Esperança",
-    description: "Organização dedicada à preservação ambiental e reflorestamento.",
-    categories: ["Meio Ambiente"],
-    location: "Curitiba, PR",
-    website: "https://verdeesperanca.org.br",
-    phone: "(41) 7777-8888",
-    acceptedDonations: ["Mudas", "Ferramentas de Jardinagem", "Equipamentos"],
-  },
 ]
 
-const categories = ["Todas", "Crianças", "Idosos", "Animais", "Meio Ambiente", "Educação", "Saúde"]
+const categories = ["Todas", "Crianças", "Idosos", "Animais", "Educação", "Saúde"]
 
 export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -133,9 +123,6 @@ export default function HomePage() {
               <a href="/cadastrar-ong" className="text-gray-700 hover:text-gray-900 transition-colors font-medium">
                 Cadastrar ONG
               </a>
-              <a href="#" className="text-gray-700 hover:text-gray-900 transition-colors font-medium">
-                Sobre
-              </a>
             </nav>
           </div>
         </div>
@@ -174,22 +161,33 @@ export default function HomePage() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  size="lg"
-                  className="text-white font-bold px-8 py-4 text-lg rounded-full shadow-lg hover:shadow-xl transition-all"
-                  style={{ backgroundColor: "var(--doafacil-primary-orange)" }}
-                >
-                  Como Doar
-                </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-2 font-bold px-8 py-4 text-lg rounded-full bg-white hover:bg-gray-50 transition-all"
-                  style={{ borderColor: "var(--doafacil-secondary-green)", color: "var(--doafacil-secondary-green)" }}
-                >
-                  Saiba Mais
-                </Button>
-              </div>
+                    <Button
+                      asChild
+                      size="lg"
+                      className="text-white font-bold px-8 py-4 text-lg rounded-full shadow-lg hover:shadow-xl transition-all"
+                      style={{ backgroundColor: "var(--doafacil-primary-orange)" }}
+                    >
+                      <a href="/como-doar">Como Doar</a>
+                    </Button>
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="lg"
+                    className="border-2 font-bold px-8 py-4 text-lg rounded-full bg-white hover:bg-gray-50 transition-all"
+                    style={{
+                      borderColor: "var(--doafacil-secondary-green)",
+                      color: "var(--doafacil-secondary-green)",
+                    }}
+                  >
+                    <a
+                      href="https://www.instagram.com/doafacil.unifor"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Saiba Mais
+                    </a>
+                  </Button>
+                </div>
             </div>
 
             <div className="relative">
@@ -462,7 +460,7 @@ export default function HomePage() {
               <h4 className="font-bold text-lg mb-6 mt-8">Links Úteis</h4>
               <ul className="space-y-3">
                 <li>
-                  <a href="#" className="text-gray-300 hover:text-white transition-colors">
+                  <a href="/como-doar" className="text-gray-300 hover:text-white transition-colors">
                     Como Doar
                   </a>
                 </li>
@@ -472,23 +470,19 @@ export default function HomePage() {
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-300 hover:text-white transition-colors ">
-                    Contato
-                  </a>
                 </li>
               </ul>
             </div>
             <div>
               <h4 className="font-bold text-lg mb-6  mt-8">Contato</h4>
               <div className="text-gray-300 space-y-3">
-                <p>contato@doafacil.org.br</p>
-                <p>(11) 9999-8888</p>
+                <p>doafacilunifor@gmail.com</p>
                 <p>Fortaleza, CE</p>
               </div>
             </div>
           </div>
           <div className="border-t border-gray-700 mt-12 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 DoaFácil. Todos os direitos reservados.</p>
+            <p>&copy; 2025 DoaFácil. Todos os direitos reservados.</p>
           </div>
         </div>
       </footer>

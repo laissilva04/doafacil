@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -9,18 +8,18 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Heart, ArrowLeft, CheckCircle, Building, Mail, Phone } from "lucide-react"
+import { ArrowLeft, CheckCircle, Building, Mail, Phone } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
+import logo from "../../public/logo.png"
 
 const categories = [
   "Crianças",
   "Idosos",
   "Animais",
-  "Meio Ambiente",
   "Educação",
   "Saúde",
   "Assistência Social",
-  "Cultura",
 ]
 
 const donationTypes = [
@@ -147,88 +146,103 @@ export default function CadastrarOngPage() {
     setIsSubmitted(true)
   }
 
-if (isSubmitted) {
-  return (
-    <div className="min-h-screen bg-white flex flex-col">
-      {/* Header */}
-      <header className="border-b border-gray-200 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <Heart className="h-8 w-8" style={{ color: "var(--doafacil-orange)" }} />
-              <h1 className="text-2xl font-bold text-gray-900">DoaFácil</h1>
-            </Link>
+  if (isSubmitted) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col">
+        {/* Header */}
+        <header className="border-b border-gray-200 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <Image
+                src={logo}
+                alt="Logo DoaFácil"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* Success Message centralizado */}
-      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl w-full mx-auto text-center">
-          <div className="mb-8">
-            <CheckCircle className="h-24 w-24 mx-auto mb-6" style={{ color: "var(--doafacil-secondary-green)" }} />
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Cadastro Enviado com Sucesso!</h2>
-            <p className="text-lg text-gray-600 mb-6 text-pretty">
-              Obrigado por se cadastrar na DoaFácil! Sua instituição foi registrada e em breve entraremos em contato.
-            </p>
-          </div>
+        {/* Success Message centralizado */}
+        <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl w-full mx-auto text-center">
+            <div className="mb-8">
+              <CheckCircle className="h-24 w-24 mx-auto mb-6" style={{ color: "var(--doafacil-secondary-green)" }} />
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">Cadastro Enviado com Sucesso!</h2>
+              <p className="text-lg text-gray-600 mb-6 text-pretty">
+                Obrigado por se cadastrar na DoaFácil! Sua instituição foi registrada e em breve entraremos em contato.
+              </p>
+            </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/">
+                <Button
+                  size="lg"
+                  className="text-white font-semibold px-8"
+                  style={{ backgroundColor: "var(--doafacil-secondary-green)", cursor: "pointer" }}
+                >
+                  Voltar ao Início
+                </Button>
+              </Link>
               <Button
+                variant="outline"
                 size="lg"
-                className="text-white font-semibold px-8"
-                style={{ backgroundColor: "var(--doafacil-secondary-green)", cursor: "pointer" }}
+                className="border-2 font-semibold px-8 bg-transparent"
+                style={{ borderColor: "var(--doafacil-orange)", color: "var(--doafacil-orange)", cursor: "pointer" }}
+                onClick={() => {
+                  setIsSubmitted(false)
+                  setFormData({
+                    name: "",
+                    description: "",
+                    address: "",
+                    city: "",
+                    state: "",
+                    phone: "",
+                    email: "",
+                    website: "",
+                    responsibleName: "",
+                    responsibleCpf: "",
+                    cnpj: "",
+                    categories: [],
+                    acceptedDonations: [],
+                    operatingHours: "",
+                    additionalInfo: "",
+                  })
+                }}
               >
-                Voltar ao Início
+                Cadastrar Outra Instituição
               </Button>
-            </Link>
-            <Button
-              variant="outline"
-              size="lg"
-              className="border-2 font-semibold px-8 bg-transparent"
-              style={{ borderColor: "var(--doafacil-orange)", color: "var(--doafacil-orange)", cursor: "pointer" }}
-              onClick={() => {
-                setIsSubmitted(false)
-                setFormData({
-                  name: "",
-                  description: "",
-                  address: "",
-                  city: "",
-                  state: "",
-                  phone: "",
-                  email: "",
-                  website: "",
-                  responsibleName: "",
-                  responsibleCpf: "",
-                  cnpj: "",
-                  categories: [],
-                  acceptedDonations: [],
-                  operatingHours: "",
-                  additionalInfo: "",
-                })
-              }}
-            >
-              Cadastrar Outra Instituição
-            </Button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  )
-}
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="border-b border-gray-200 bg-white">
+      <header className="border-b border-gray-100 bg-white/95 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <Heart className="h-8 w-8" style={{ color: "var(--doafacil-orange)" }} />
-              <h1 className="text-2xl font-bold text-gray-900">DoaFácil</h1>
-            </Link>
-            <Link href="/" className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+          <div className="flex items-center justify-between h-24"> 
+            <div className="flex items-center gap-3">
+              <div className="relative h-[7.75rem] w-[7.75rem]">
+                <Image
+                  src={logo}
+                  alt="Logo DoaFácil"
+                  fill
+                  className="object-contain"
+                  priority
+                  sizes="(max-width: 640px) 12rem, (max-width: 1024px) 14rem, 18rem"
+                />
+              </div>
+              <span className="sr-only">DoaFácil</span>
+            </div>
+            <Link
+              href="/"
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+            >
               <ArrowLeft className="h-4 w-4" />
               Voltar
             </Link>
@@ -492,7 +506,7 @@ if (isSubmitted) {
                       type="submit"
                       disabled={isSubmitting}
                       className="w-full sm:w-auto text-white font-semibold px-8"
-                      style={{ backgroundColor: "var(--doafacil-primary-orange)", cursor: "pointer"}}
+                      style={{ backgroundColor: "var(--doafacil-primary-orange)", cursor: "pointer" }}
                     >
                       {isSubmitting ? "Enviando..." : "Cadastrar Instituição"}
                     </Button>
