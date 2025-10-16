@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Institution {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name              String   @db.VarChar(255)
+  description       String   @db.Text
+  address           String   @db.VarChar(500)
+  city              String   @db.VarChar(100)
+  state             String   @db.VarChar(2)
+  phone             String   @db.VarChar(20)
+  email             String   @db.VarChar(255)
+  website           String?  @db.VarChar(255)
+  cnpj              String   @unique @db.VarChar(18)
+  responsibleName   String   @map("responsible_name") @db.VarChar(255)
+  responsibleCpf    String   @map("responsible_cpf") @db.VarChar(14)
+  operatingHours    String?  @map("operating_hours") @db.VarChar(100)
+  additionalInfo    String?  @map("additional_info") @db.Text
+  isActive          Boolean  @default(true) @map("is_active")
+  isVerified        Boolean  @default(false) @map("is_verified")
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relacionamentos
+  institutionCategories InstitutionCategory[]
+  institutionDonationTypes InstitutionDonationType[]
+
+  @@map("institutions")
+}
+
+model Category {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String   @unique @db.VarChar(100)
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relacionamentos
+  institutionCategories InstitutionCategory[]
+
+  @@map("categories")
+}
+
+model DonationType {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String   @unique @db.VarChar(100)
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relacionamentos
+  institutionDonationTypes InstitutionDonationType[]
+
+  @@map("donation_types")
+}
+
+model InstitutionCategory {
+  id             String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  institutionId  String @map("institution_id") @db.Uuid
+  categoryId     String @map("category_id") @db.Uuid
+
+  // Relacionamentos
+  institution    Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  category       Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([institutionId, categoryId])
+  @@map("institution_categories")
+}
+
+model InstitutionDonationType {
+  id             String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  institutionId  String @map("institution_id") @db.Uuid
+  donationTypeId String @map("donation_type_id") @db.Uuid
+
+  // Relacionamentos
+  institution    Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  donationType   DonationType @relation(fields: [donationTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([institutionId, donationTypeId])
+  @@map("institution_donation_types")
+}
