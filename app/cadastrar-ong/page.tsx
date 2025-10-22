@@ -84,15 +84,15 @@ export default function CadastrarOngPage() {
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }))
-    }
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }))
   }
 
   const handleCategoryChange = (category: string, checked: boolean) => {
     setFormData((prev) => ({
       ...prev,
-      categories: checked ? [...prev.categories, category] : prev.categories.filter((c) => c !== category),
+      categories: checked
+        ? [...prev.categories, category]
+        : prev.categories.filter((c) => c !== category),
     }))
   }
 
@@ -122,11 +122,8 @@ export default function CadastrarOngPage() {
     if (formData.categories.length === 0) newErrors.categories = "Selecione pelo menos uma categoria"
     if (formData.acceptedDonations.length === 0) newErrors.acceptedDonations = "Selecione pelo menos um tipo de doação"
 
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (formData.email && !emailRegex.test(formData.email)) {
-      newErrors.email = "Email inválido"
-    }
+    if (formData.email && !emailRegex.test(formData.email)) newErrors.email = "Email inválido"
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -134,37 +131,40 @@ export default function CadastrarOngPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
     if (!validateForm()) return
 
     setIsSubmitting(true)
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    setIsSubmitting(false)
-    setIsSubmitted(true)
+    try {
+      const res = await fetch("/api/cadastrar-ong-form", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      })
+      const result = await res.json()
+      if (result.success) {
+        setIsSubmitted(true)
+      } else {
+        alert("Erro ao enviar o cadastro. Tente novamente.")
+      }
+    } catch (err) {
+      console.error(err)
+      alert("Erro inesperado. Tente novamente.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   if (isSubmitted) {
     return (
       <div className="min-h-screen bg-white flex flex-col">
-        {/* Header */}
         <header className="border-b border-gray-200 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
-              <Image
-                src={logo}
-                alt="Logo DoaFácil"
-                fill
-                className="object-contain"
-                priority
-              />
+              <Image src={logo} alt="Logo DoaFácil" width={150} height={50} className="object-contain" priority />
             </div>
           </div>
         </header>
 
-        {/* Success Message centralizado */}
         <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl w-full mx-auto text-center">
             <div className="mb-8">
@@ -177,11 +177,7 @@ export default function CadastrarOngPage() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/">
-                <Button
-                  size="lg"
-                  className="text-white font-semibold px-8"
-                  style={{ backgroundColor: "var(--doafacil-secondary-green)", cursor: "pointer" }}
-                >
+                <Button size="lg" className="text-white font-semibold px-8" style={{ backgroundColor: "var(--doafacil-secondary-green)", cursor: "pointer" }}>
                   Voltar ao Início
                 </Button>
               </Link>
@@ -225,24 +221,14 @@ export default function CadastrarOngPage() {
       {/* Header */}
       <header className="border-b border-gray-100 bg-white/95 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-24"> 
+          <div className="flex items-center justify-between h-24">
             <div className="flex items-center gap-3">
               <div className="relative h-[7.75rem] w-[7.75rem]">
-                <Image
-                  src={logo}
-                  alt="Logo DoaFácil"
-                  fill
-                  className="object-contain"
-                  priority
-                  sizes="(max-width: 640px) 12rem, (max-width: 1024px) 14rem, 18rem"
-                />
+                <Image src={logo} alt="Logo DoaFácil" fill className="object-contain" priority />
               </div>
               <span className="sr-only">DoaFácil</span>
             </div>
-            <Link
-              href="/"
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
-            >
+            <Link href="/" className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
               <ArrowLeft className="h-4 w-4" />
               Voltar
             </Link>
@@ -268,47 +254,50 @@ export default function CadastrarOngPage() {
               </CardTitle>
               <CardDescription>Todos os campos marcados com * são obrigatórios</CardDescription>
             </CardHeader>
+
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Basic Information */}
+                {/* Nome */}
+                <div className="md:col-span-2">
+                  <Label htmlFor="name">Nome da Instituição *</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => handleInputChange("name", e.target.value)}
+                    placeholder="Ex: Instituto Criança Feliz"
+                    className={errors.name ? "border-red-500" : ""}
+                  />
+                  {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+                </div>
+
+                {/* Descrição */}
+                <div className="md:col-span-2">
+                  <Label htmlFor="description">Descrição *</Label>
+                  <Textarea
+                    id="description"
+                    value={formData.description}
+                    onChange={(e) => handleInputChange("description", e.target.value)}
+                    rows={4}
+                    className={errors.description ? "border-red-500" : ""}
+                  />
+                  {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
+                </div>
+
+                {/* Endereço */}
+                <div className="md:col-span-2">
+                  <Label htmlFor="address">Endereço Completo *</Label>
+                  <Input
+                    id="address"
+                    value={formData.address}
+                    onChange={(e) => handleInputChange("address", e.target.value)}
+                    placeholder="Rua, número, bairro..."
+                    className={errors.address ? "border-red-500" : ""}
+                  />
+                  {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
+                </div>
+
+                {/* Cidade e Estado */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="md:col-span-2">
-                    <Label htmlFor="name">Nome da Instituição *</Label>
-                    <Input
-                      id="name"
-                      value={formData.name}
-                      onChange={(e) => handleInputChange("name", e.target.value)}
-                      placeholder="Ex: Instituto Criança Feliz"
-                      className={errors.name ? "border-red-500" : ""}
-                    />
-                    {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
-                  </div>
-
-                  <div className="md:col-span-2">
-                    <Label htmlFor="description">Descrição da Instituição *</Label>
-                    <Textarea
-                      id="description"
-                      value={formData.description}
-                      onChange={(e) => handleInputChange("description", e.target.value)}
-                      placeholder="Descreva os objetivos e atividades da sua instituição..."
-                      rows={4}
-                      className={errors.description ? "border-red-500" : ""}
-                    />
-                    {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
-                  </div>
-
-                  <div className="md:col-span-2">
-                    <Label htmlFor="address">Endereço Completo *</Label>
-                    <Input
-                      id="address"
-                      value={formData.address}
-                      onChange={(e) => handleInputChange("address", e.target.value)}
-                      placeholder="Rua, número, bairro..."
-                      className={errors.address ? "border-red-500" : ""}
-                    />
-                    {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
-                  </div>
-
                   <div>
                     <Label htmlFor="city">Cidade *</Label>
                     <Input
@@ -320,7 +309,6 @@ export default function CadastrarOngPage() {
                     />
                     {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city}</p>}
                   </div>
-
                   <div>
                     <Label htmlFor="state">Estado *</Label>
                     <Input
@@ -334,7 +322,7 @@ export default function CadastrarOngPage() {
                   </div>
                 </div>
 
-                {/* Contact Information */}
+                {/* Informações de contato */}
                 <div className="border-t pt-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                     <Phone className="h-5 w-5" style={{ color: "var(--doafacil-green)" }} />
@@ -352,7 +340,6 @@ export default function CadastrarOngPage() {
                       />
                       {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
                     </div>
-
                     <div>
                       <Label htmlFor="email">Email *</Label>
                       <Input
@@ -365,7 +352,6 @@ export default function CadastrarOngPage() {
                       />
                       {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
                     </div>
-
                     <div className="md:col-span-2">
                       <Label htmlFor="website">Site da Instituição</Label>
                       <Input
@@ -378,7 +364,7 @@ export default function CadastrarOngPage() {
                   </div>
                 </div>
 
-                {/* Legal Information */}
+                {/* Informações legais */}
                 <div className="border-t pt-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                     <Mail className="h-5 w-5" style={{ color: "var(--doafacil-light-blue)" }} />
@@ -423,7 +409,7 @@ export default function CadastrarOngPage() {
                   </div>
                 </div>
 
-                {/* Categories */}
+                {/* Categorias */}
                 <div className="border-t pt-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Categorias de Atuação *</h3>
                   <p className="text-sm text-gray-600 mb-4">Selecione as áreas em que sua instituição atua:</p>
@@ -435,88 +421,82 @@ export default function CadastrarOngPage() {
                           checked={formData.categories.includes(category)}
                           onCheckedChange={(checked) => handleCategoryChange(category, checked as boolean)}
                         />
-                        <Label htmlFor={`category-${category}`} className="text-sm">
-                          {category}
-                        </Label>
+                        <Label htmlFor={`category-${category}`} className="text-sm">{category}</Label>
                       </div>
                     ))}
                   </div>
                   {errors.categories && <p className="text-red-500 text-sm mt-2">{errors.categories}</p>}
                 </div>
 
-                {/* Donation Types */}
+                {/* Tipos de Doações */}
                 <div className="border-t pt-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Tipos de Doações Aceitas *</h3>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Selecione os tipos de doações que sua instituição aceita:
-                  </p>
+                  <p className="text-sm text-gray-600 mb-4">Selecione os tipos de doações que sua instituição aceita:</p>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {donationTypes.map((donationType) => (
                       <div key={donationType} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`donation-${donationType}`}
-                          checked={formData.acceptedDonations.includes(donationType)}
-                          onCheckedChange={(checked) => handleDonationTypeChange(donationType, checked as boolean)}
-                        />
-                        <Label htmlFor={`donation-${donationType}`} className="text-sm">
-                          {donationType}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-                  {errors.acceptedDonations && <p className="text-red-500 text-sm mt-2">{errors.acceptedDonations}</p>}
+                      <Checkbox
+                        id={`donation-${donationType}`}
+                        checked={formData.acceptedDonations.includes(donationType)}
+                        onCheckedChange={(checked) => handleDonationTypeChange(donationType, checked as boolean)}
+                      />
+                      <Label htmlFor={`donation-${donationType}`} className="text-sm">{donationType}</Label>
+                    </div>
+                  ))}
                 </div>
+                {errors.acceptedDonations && <p className="text-red-500 text-sm mt-2">{errors.acceptedDonations}</p>}
+              </div>
 
-                {/* Additional Information */}
-                <div className="border-t pt-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Informações Adicionais</h3>
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="operatingHours">Horário de Funcionamento</Label>
-                      <Input
-                        id="operatingHours"
-                        value={formData.operatingHours}
-                        onChange={(e) => handleInputChange("operatingHours", e.target.value)}
-                        placeholder="Ex: Segunda a Sexta, 8h às 17h"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="additionalInfo">Informações Complementares</Label>
-                      <Textarea
-                        id="additionalInfo"
-                        value={formData.additionalInfo}
-                        onChange={(e) => handleInputChange("additionalInfo", e.target.value)}
-                        placeholder="Informações adicionais sobre a instituição, procedimentos para doação, etc."
-                        rows={3}
-                      />
-                    </div>
+              {/* Informações adicionais */}
+              <div className="border-t pt-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Informações Adicionais</h3>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="operatingHours">Horário de Funcionamento</Label>
+                    <Input
+                      id="operatingHours"
+                      value={formData.operatingHours}
+                      onChange={(e) => handleInputChange("operatingHours", e.target.value)}
+                      placeholder="Ex: Segunda a Sexta, 8h às 17h"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="additionalInfo">Informações Complementares</Label>
+                    <Textarea
+                      id="additionalInfo"
+                      value={formData.additionalInfo}
+                      onChange={(e) => handleInputChange("additionalInfo", e.target.value)}
+                      placeholder="Informações adicionais sobre a instituição, procedimentos para doação, etc."
+                      rows={3}
+                    />
                   </div>
                 </div>
+              </div>
 
-                {/* Submit Button */}
-                <div className="border-t pt-6">
-                  <div className="flex flex-col sm:flex-row gap-4 justify-end">
-                    <Link href="/">
-                      <Button variant="outline" type="button" className="w-full sm:w-auto bg-transparent" style={{ cursor: "pointer" }}>
-                        Cancelar
-                      </Button>
-                    </Link>
-                    <Button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="w-full sm:w-auto text-white font-semibold px-8"
-                      style={{ backgroundColor: "var(--doafacil-primary-orange)", cursor: "pointer" }}
-                    >
-                      {isSubmitting ? "Enviando..." : "Cadastrar Instituição"}
+              {/* Botões */}
+              <div className="border-t pt-6">
+                <div className="flex flex-col sm:flex-row gap-4 justify-end">
+                  <Link href="/">
+                    <Button variant="outline" type="button" className="w-full sm:w-auto bg-transparent" style={{ cursor: "pointer" }}>
+                      Cancelar
                     </Button>
-                  </div>
+                  </Link>
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full sm:w-auto text-white font-semibold px-8"
+                    style={{ backgroundColor: "var(--doafacil-primary-orange)", cursor: "pointer" }}
+                  >
+                    {isSubmitting ? "Enviando..." : "Cadastrar Instituição"}
+                  </Button>
                 </div>
-              </form>
-            </CardContent>
-          </Card>
-        </div>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </div>
-  )
+  </div>
+)
 }
+
