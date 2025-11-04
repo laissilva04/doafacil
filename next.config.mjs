@@ -9,6 +9,14 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  experimental: {
+    serverComponentsExternalPackages: ['@prisma/client'],
+  },
+  api: {
+    bodyParser: {
+      sizeLimit: '1mb',
+    },
+  },
 }
 
 export default nextConfig
