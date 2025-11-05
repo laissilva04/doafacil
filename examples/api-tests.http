@@ -1,0 +1,154 @@
+### DoaFácil API - Exemplos de Testes
+
+### 1. Buscar todas as instituições
+GET http://localhost:3000/api/institutions
+
+### 2. Buscar instituições com filtros
+GET http://localhost:3000/api/institutions?searchText=crianças&cityName=São Paulo&page=1&limit=5
+
+### 3. Buscar instituições por categoria
+GET http://localhost:3000/api/institutions?categoryName=Crianças
+
+### 4. Buscar instituições por tipo de doação
+GET http://localhost:3000/api/institutions?donationTypeName=Roupas
+
+### 5. Buscar instituição específica
+GET http://localhost:3000/api/institutions/{{institutionId}}
+
+### 6. Criar nova instituição
+POST http://localhost:3000/api/institutions
+Content-Type: application/json
+
+{
+  "name": "Nova Instituição Teste",
+  "description": "Instituição criada para teste da API",
+  "address": "Rua Teste, 123",
+  "city": "São Paulo",
+  "state": "SP",
+  "phone": "(11) 9999-9999",
+  "email": "teste@instituicao.org.br",
+  "website": "https://teste.org.br",
+  "cnpj": "11.111.111/0001-11",
+  "responsibleName": "João Silva",
+  "responsibleCpf": "111.111.111-11",
+  "operatingHours": "Segunda a Sexta, 9h às 18h",
+  "additionalInfo": "Instituição de teste",
+  "categoryIds": ["{{categoryId}}"],
+  "donationTypeIds": ["{{donationTypeId}}"]
+}
+
+### 7. Atualizar instituição
+PUT http://localhost:3000/api/institutions/{{institutionId}}
+Content-Type: application/json
+
+{
+  "name": "Instituição Atualizada",
+  "description": "Descrição atualizada",
+  "additionalInfo": "Informações atualizadas"
+}
+
+### 8. Desativar instituição
+DELETE http://localhost:3000/api/institutions/{{institutionId}}
+
+### 9. Buscar todas as categorias
+GET http://localhost:3000/api/categories
+
+### 10. Criar nova categoria
+POST http://localhost:3000/api/categories
+Content-Type: application/json
+
+{
+  "name": "Nova Categoria",
+  "description": "Descrição da nova categoria"
+}
+
+### 11. Buscar todos os tipos de doação
+GET http://localhost:3000/api/donation-types
+
+### 12. Criar novo tipo de doação
+POST http://localhost:3000/api/donation-types
+Content-Type: application/json
+
+{
+  "name": "Novo Tipo",
+  "description": "Descrição do novo tipo"
+}
+
+### 13. Buscar estatísticas
+GET http://localhost:3000/api/stats
+
+### 14. Teste de validação - CNPJ inválido
+POST http://localhost:3000/api/institutions
+Content-Type: application/json
+
+{
+  "name": "Teste CNPJ Inválido",
+  "description": "Teste de validação",
+  "address": "Rua Teste, 123",
+  "city": "São Paulo",
+  "state": "SP",
+  "phone": "(11) 9999-9999",
+  "email": "teste@teste.com",
+  "cnpj": "11.111.111/0001-99",
+  "responsibleName": "João Silva",
+  "responsibleCpf": "111.111.111-11",
+  "categoryIds": ["{{categoryId}}"],
+  "donationTypeIds": ["{{donationTypeId}}"]
+}
+
+### 15. Teste de validação - CPF inválido
+POST http://localhost:3000/api/institutions
+Content-Type: application/json
+
+{
+  "name": "Teste CPF Inválido",
+  "description": "Teste de validação",
+  "address": "Rua Teste, 123",
+  "city": "São Paulo",
+  "state": "SP",
+  "phone": "(11) 9999-9999",
+  "email": "teste@teste.com",
+  "cnpj": "11.111.111/0001-11",
+  "responsibleName": "João Silva",
+  "responsibleCpf": "111.111.111-99",
+  "categoryIds": ["{{categoryId}}"],
+  "donationTypeIds": ["{{donationTypeId}}"]
+}
+
+### 16. Teste de validação - Email inválido
+POST http://localhost:3000/api/institutions
+Content-Type: application/json
+
+{
+  "name": "Teste Email Inválido",
+  "description": "Teste de validação",
+  "address": "Rua Teste, 123",
+  "city": "São Paulo",
+  "state": "SP",
+  "phone": "(11) 9999-9999",
+  "email": "email-invalido",
+  "cnpj": "11.111.111/0001-11",
+  "responsibleName": "João Silva",
+  "responsibleCpf": "111.111.111-11",
+  "categoryIds": ["{{categoryId}}"],
+  "donationTypeIds": ["{{donationTypeId}}"]
+}
+
+### 17. Teste de validação - Telefone inválido
+POST http://localhost:3000/api/institutions
+Content-Type: application/json
+
+{
+  "name": "Teste Telefone Inválido",
+  "description": "Teste de validação",
+  "address": "Rua Teste, 123",
+  "city": "São Paulo",
+  "state": "SP",
+  "phone": "1199999999",
+  "email": "teste@teste.com",
+  "cnpj": "11.111.111/0001-11",
+  "responsibleName": "João Silva",
+  "responsibleCpf": "111.111.111-11",
+  "categoryIds": ["{{categoryId}}"],
+  "donationTypeIds": ["{{donationTypeId}}"]
+}
