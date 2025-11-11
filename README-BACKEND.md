@@ -12,11 +12,20 @@ pnpm install
 ```
 
 ### 2. Configurar Banco de Dados
-1. Crie um banco PostgreSQL
-2. Configure a variável `DATABASE_URL` no arquivo `.env.local`:
+
+O projeto está configurado para usar **Supabase** como banco de dados PostgreSQL.
+
+1. O arquivo `.env.local` já foi criado com as configurações básicas
+2. **Importante:** Você precisa obter a connection string completa do PostgreSQL do Supabase:
+   - Acesse o painel do Supabase: https://supabase.com/dashboard
+   - Vá em **Settings** > **Database**
+   - Copie a connection string (URI) e substitua `[YOUR-PASSWORD]` pela senha do seu banco
+3. Configure a variável `DATABASE_URL` no arquivo `.env.local`:
 ```env
-DATABASE_URL="postgresql://username:password@localhost:5432/doafacil"
+DATABASE_URL="postgresql://postgres:[YOUR-PASSWORD]@db.edournvwmwjyztjuoxow.supabase.co:5432/postgres"
 ```
+
+📚 **Para instruções detalhadas, consulte o arquivo [SUPABASE-SETUP.md](./SUPABASE-SETUP.md)**
 
 ### 3. Executar Migrações
 ```bash

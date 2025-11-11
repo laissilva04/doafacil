@@ -1,93 +1,115 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Search, Filter, MapPin, Globe, Phone, Users, Handshake, TreePine, Baby } from "lucide-react"
+import { Search, Filter, MapPin, Globe, Phone, Users, Handshake, TreePine, Baby, Loader2 } from "lucide-react"
 import Image from "next/image"
 import logo from "../public/logo.png"
 import logobranca from "../public/logo-branca.png"
 
-// Mock data for ONGs
-const mockOngs = [
-  {
-    id: 1,
-    name: "Instituto Criança Feliz",
-    description: "Dedicada ao cuidado e educação de crianças em situação de vulnerabilidade social.",
-    categories: ["Crianças", "Educação"],
-    location: "São Paulo, SP",
-    website: "https://criancafeliz.org.br",
-    phone: "(11) 1234-5678",
-    acceptedDonations: ["Roupas", "Brinquedos", "Material Escolar"],
-  },
-  {
-    id: 2,
-    name: "Lar dos Idosos São Vicente",
-    description: "Casa de repouso que oferece cuidados especializados para idosos.",
-    categories: ["Idosos", "Saúde"],
-    location: "Rio de Janeiro, RJ",
-    website: "https://larsaovicente.org.br",
-    phone: "(21) 9876-5432",
-    acceptedDonations: ["Medicamentos", "Fraldas", "Alimentos"],
-  },
-  {
-    id: 3,
-    name: "Proteção Animal Unidos",
-    description: "ONG focada no resgate e cuidado de animais abandonados.",
-    categories: ["Animais"],
-    location: "Belo Horizonte, MG",
-    website: "https://protecaoanimal.org.br",
-    phone: "(31) 5555-1234",
-    acceptedDonations: ["Ração", "Medicamentos Veterinários", "Cobertores"],
-  },
-]
+interface Institution {
+  id: string
+  name: string
+  description: string
+  categories: Array<{ id: string; name: string }>
+  location: string
+  website?: string | null
+  phone: string
+  acceptedDonations: Array<{ id: string; name: string }>
+}
 
-const categories = ["Todas", "Crianças", "Idosos", "Animais", "Educação", "Saúde"]
+interface Category {
+  id: string
+  name: string
+  description?: string | null
+}
 
 export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("Todas")
-  const [filteredOngs, setFilteredOngs] = useState(mockOngs)
+  const [institutions, setInstitutions] = useState<Institution[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
+  const [loading, setLoading] = useState(true)
+  const [searchLoading, setSearchLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  // Buscar categorias na inicialização
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('/api/categories')
+        const result = await response.json()
+        if (result.success && result.data) {
+          setCategories(result.data)
+        }
+      } catch (err) {
+        console.error('Erro ao buscar categorias:', err)
+      }
+    }
+    fetchCategories()
+  }, [])
+
+  // Buscar instituições
+  const fetchInstitutions = async (searchText?: string, categoryName?: string) => {
+    setSearchLoading(true)
+    setError(null)
+    
+    try {
+      const params = new URLSearchParams()
+      if (searchText) params.append('searchText', searchText)
+      if (categoryName && categoryName !== 'Todas') params.append('categoryName', categoryName)
+      params.append('limit', '100') // Buscar mais resultados
+      
+      const response = await fetch(`/api/institutions?${params.toString()}`)
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || `Erro ${response.status}: ${response.statusText}`)
+      }
+
+      const result = await response.json()
+      
+      if (result.success && result.data) {
+        const formattedInstitutions: Institution[] = result.data.data.map((inst: any) => ({
+          id: inst.id,
+          name: inst.name,
+          description: inst.description,
+          categories: inst.categories || [],
+          location: `${inst.city}, ${inst.state}`,
+          website: inst.website,
+          phone: inst.phone,
+          acceptedDonations: inst.donationTypes || []
+        }))
+        setInstitutions(formattedInstitutions)
+      } else {
+        setError(result.error || 'Erro ao buscar instituições')
+        setInstitutions([])
+      }
+    } catch (err: any) {
+      console.error('Erro ao buscar instituições:', err)
+      setError(err.message || 'Erro ao conectar com o servidor. Verifique se o servidor está rodando.')
+      setInstitutions([])
+    } finally {
+      setSearchLoading(false)
+      setLoading(false)
+    }
+  }
+
+  // Buscar instituições na inicialização
+  useEffect(() => {
+    fetchInstitutions()
+  }, [])
 
   const handleSearch = () => {
-    let filtered = mockOngs
-
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (ong) =>
-          ong.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          ong.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          ong.location.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
-    }
-
-    if (selectedCategory !== "Todas") {
-      filtered = filtered.filter((ong) => ong.categories.includes(selectedCategory))
-    }
-
-    setFilteredOngs(filtered)
+    fetchInstitutions(searchTerm || undefined, selectedCategory !== 'Todas' ? selectedCategory : undefined)
   }
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category)
-    let filtered = mockOngs
-
-    if (category !== "Todas") {
-      filtered = filtered.filter((ong) => ong.categories.includes(category))
-    }
-
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (ong) =>
-          ong.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          ong.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          ong.location.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
-    }
-
-    setFilteredOngs(filtered)
+    fetchInstitutions(searchTerm || undefined, category !== 'Todas' ? category : undefined)
   }
 
   return (
@@ -308,11 +330,21 @@ export default function HomePage() {
               </div>
               <Button
                 onClick={handleSearch}
-                className="h-14 px-8 text-white font-bold text-lg rounded-xl shadow-md hover:shadow-lg transition-all"
+                disabled={searchLoading}
+                className="h-14 px-8 text-white font-bold text-lg rounded-xl shadow-md hover:shadow-lg transition-all disabled:opacity-50"
                 style={{ backgroundColor: "var(--doafacil-primary-orange)" }}
               >
-                <Search className="h-5 w-5 mr-2" />
-                Buscar
+                {searchLoading ? (
+                  <>
+                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                    Buscando...
+                  </>
+                ) : (
+                  <>
+                    <Search className="h-5 w-5 mr-2" />
+                    Buscar
+                  </>
+                )}
               </Button>
             </div>
 
@@ -322,20 +354,33 @@ export default function HomePage() {
                 <Filter className="h-5 w-5" />
                 Filtrar por:
               </div>
+              <Button
+                variant={selectedCategory === "Todas" ? "default" : "outline"}
+                size="sm"
+                onClick={() => handleCategoryClick("Todas")}
+                className={`rounded-full font-medium transition-all ${
+                  selectedCategory === "Todas"
+                    ? "text-white shadow-md"
+                    : "text-gray-600 border-gray-300 hover:border-gray-400"
+                }`}
+                style={selectedCategory === "Todas" ? { backgroundColor: "var(--doafacil-accent-purple)" } : {}}
+              >
+                Todas
+              </Button>
               {categories.map((category) => (
                 <Button
-                  key={category}
-                  variant={selectedCategory === category ? "default" : "outline"}
+                  key={category.id}
+                  variant={selectedCategory === category.name ? "default" : "outline"}
                   size="sm"
-                  onClick={() => handleCategoryClick(category)}
+                  onClick={() => handleCategoryClick(category.name)}
                   className={`rounded-full font-medium transition-all ${
-                    selectedCategory === category
+                    selectedCategory === category.name
                       ? "text-white shadow-md"
                       : "text-gray-600 border-gray-300 hover:border-gray-400"
                   }`}
-                  style={selectedCategory === category ? { backgroundColor: "var(--doafacil-accent-purple)" } : {}}
+                  style={selectedCategory === category.name ? { backgroundColor: "var(--doafacil-accent-purple)" } : {}}
                 >
-                  {category}
+                  {category.name}
                 </Button>
               ))}
             </div>
@@ -348,12 +393,33 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-2xl font-bold text-gray-900">
-              {filteredOngs.length} {filteredOngs.length === 1 ? "Instituição Encontrada" : "Instituições Encontradas"}
+              {loading || searchLoading ? (
+                <span className="flex items-center gap-2">
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  Carregando...
+                </span>
+              ) : (
+                <>
+                  {institutions.length} {institutions.length === 1 ? "Instituição Encontrada" : "Instituições Encontradas"}
+                </>
+              )}
             </h3>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredOngs.map((ong) => (
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+              {error}
+            </div>
+          )}
+
+          {loading ? (
+            <div className="text-center py-16">
+              <Loader2 className="h-12 w-12 animate-spin mx-auto text-gray-400 mb-4" />
+              <p className="text-gray-600">Carregando instituições...</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {institutions.map((ong) => (
               <Card
                 key={ong.id}
                 className="hover:shadow-xl transition-all duration-300 border-0 shadow-md rounded-2xl overflow-hidden bg-white"
@@ -371,12 +437,12 @@ export default function HomePage() {
                   <div className="flex flex-wrap gap-2">
                     {ong.categories.map((category) => (
                       <Badge
-                        key={category}
+                        key={category.id}
                         variant="secondary"
                         className="text-xs font-medium px-3 py-1 rounded-full"
                         style={{ backgroundColor: "var(--doafacil-background-yellow)", color: "#374151" }}
                       >
-                        {category}
+                        {category.name}
                       </Badge>
                     ))}
                   </div>
@@ -389,33 +455,39 @@ export default function HomePage() {
                   <div className="mb-6">
                     <h4 className="font-bold text-sm text-gray-900 mb-3">Aceita doações de:</h4>
                     <div className="flex flex-wrap gap-2">
-                      {ong.acceptedDonations.map((donation) => (
-                        <Badge
-                          key={donation}
-                          variant="outline"
-                          className="text-xs font-medium px-3 py-1 rounded-full border-2"
-                          style={{
-                            borderColor: "var(--doafacil-secondary-green)",
-                            color: "var(--doafacil-secondary-green)",
-                          }}
-                        >
-                          {donation}
-                        </Badge>
-                      ))}
+                      {ong.acceptedDonations.length > 0 ? (
+                        ong.acceptedDonations.map((donation) => (
+                          <Badge
+                            key={donation.id}
+                            variant="outline"
+                            className="text-xs font-medium px-3 py-1 rounded-full border-2"
+                            style={{
+                              borderColor: "var(--doafacil-secondary-green)",
+                              color: "var(--doafacil-secondary-green)",
+                            }}
+                          >
+                            {donation.name}
+                          </Badge>
+                        ))
+                      ) : (
+                        <span className="text-xs text-gray-500">Não especificado</span>
+                      )}
                     </div>
                   </div>
 
                   <div className="space-y-3">
-                    <a
-                      href={ong.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center text-sm font-medium hover:underline transition-colors"
-                      style={{ color: "var(--doafacil-neutral-blue)" }}
-                    >
-                      <Globe className="h-4 w-4 mr-3" />
-                      Visitar Site
-                    </a>
+                    {ong.website && (
+                      <a
+                        href={ong.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center text-sm font-medium hover:underline transition-colors"
+                        style={{ color: "var(--doafacil-neutral-blue)" }}
+                      >
+                        <Globe className="h-4 w-4 mr-3" />
+                        Visitar Site
+                      </a>
+                    )}
                     <div className="flex items-center text-sm text-gray-600">
                       <Phone className="h-4 w-4 mr-3" />
                       {ong.phone}
@@ -423,10 +495,11 @@ export default function HomePage() {
                   </div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
-          {filteredOngs.length === 0 && (
+          {!loading && !searchLoading && institutions.length === 0 && (
             <div className="text-center py-16">
               <div className="text-gray-300 mb-6">
                 <Search className="h-20 w-20 mx-auto" />
