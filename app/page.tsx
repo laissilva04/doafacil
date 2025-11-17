@@ -202,7 +202,7 @@ export default function HomePage() {
                     }}
                   >
                     <a
-                      href="https://www.instagram.com/doafacil.unifor"
+                      href="https://www.instagram.com/doafacil.br"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
